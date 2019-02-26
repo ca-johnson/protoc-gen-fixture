@@ -1,12 +1,15 @@
 build:
 	go build .
 
+# For allowing others to easily add --fixtures_out to their protoc cmd
+# Add to our bazel packages?
+
 # install:
 # 	export PATH=$PATH:.
 
 gen: build
 	(protoc  \
-	--plugin="protoc-gen-fixtures" \
-	--proto_path=. \
-	--fixtures_out=test/. \
-	test.proto)	
+	--plugin="protoc-gen-fixture" \
+	--proto_path=test/. \
+	--fixture_out=filename=test/test.fixture:. \
+	test/test.proto)	

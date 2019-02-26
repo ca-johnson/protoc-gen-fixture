@@ -7,39 +7,60 @@
 package main
 
 import (
+	"flag"
 	"io/ioutil"
 	"os"
+	"strings"
 
-	"github.com/gogo/protobuf/proto"
-	"github.com/gogo/protobuf/protoc-gen-gogo/generator"
+	"github.com/golang/protobuf/proto"
+	"github.com/golang/protobuf/protoc-gen-go/generator"
 )
 
+var fFixture = flag.String("fixture", "", "read from this file instead of stdin")
+
+// Optionally output to custom filename, specified by filename param to this plugin
+// i.e. fixture_out=filename=myfixture:.
+func getFixtureOutName(genParams string) string {
+	for _, parameter := range strings.Split(genParams, ",") {
+		kvp := strings.SplitN(parameter, "=", 2)
+		if len(kvp) != 2 || kvp[0] != "filename" {
+			continue
+		}
+		return kvp[1]
+	}
+
+	return "proto.fixture"
+}
+
 func main() {
+	flag.Parse()
 	gen := generator.New()
 
-	data, err := ioutil.ReadAll(os.Stdin)
-	if err != nil {
-		gen.Error(err, "reading input")
+	var data []byte
+	var err error
+	if *fFixture != "" {
+		data, err = ioutil.ReadFile(*fFixture)
+	} else {
+		data, err = ioutil.ReadAll(os.Stdin)
 	}
-
+	if err != nil {
+		panic(err)
+	}
 	if err := proto.Unmarshal(data, gen.Request); err != nil {
-		gen.Error(err, "parsing input proto")
+		panic(err)
 	}
 
-	if len(gen.Response.File) == 0 {
-		gen.Error(nil, "no input files")
+	if len(gen.Request.FileToGenerate) == 0 {
+		panic("no files to generate")
 	}
 
-	fixtureName := "helloworld"
-	// fixtureName := strings.Replace(*gen.Response.File[0].Name, ".pb.go", ".fixture", -1)
-	// Write out fixture for debugging/unit tests
-	f, err := os.Create(fixtureName)
+	f, err := os.Create(getFixtureOutName(gen.Request.GetParameter()))
 	if err != nil {
-		gen.Error(err, "os.Create")
+		panic(err)
 	}
 	defer f.Close()
 	_, err = f.Write(data)
 	if err != nil {
-		gen.Error(err, "f.Write")
+		panic(err)
 	}
 }
