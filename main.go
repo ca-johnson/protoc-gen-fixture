@@ -1,8 +1,4 @@
 // Copyright 2019 Carl Johnson. All Rights Reserved.
-// See LICENSE for licensing terms.
-
-// Simply dumps a fixture of stdin alongside the first protofile in the file descriptor
-// This file then used to debug protobuf plugins, simulating the same protoc context
 
 package main
 
