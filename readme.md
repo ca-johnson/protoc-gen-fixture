@@ -1,6 +1,6 @@
 # protoc-gen-fixture
 
-A protobuf plugin which writes the input to a plugin out as a file.
+A protobuf plugin which writes its input out as a file.
 
 You can then use this as a fixture for debugging plugins as a standalone executable.
 
