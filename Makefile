@@ -11,5 +11,5 @@ gen: build
 	(protoc  \
 	--plugin="protoc-gen-fixture" \
 	--proto_path=test/. \
-	--fixture_out=filename=test/test.fixture:. \
+	--fixture_out=filename=test/proto.fixture:. \
 	test/test.proto)	
