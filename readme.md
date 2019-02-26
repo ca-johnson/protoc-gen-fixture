@@ -4,7 +4,7 @@ A protobuf plugin which writes the input to a plugin out as a file.
 
 You can then use this as a fixture for debugging plugins as a standalone executable.
 
-# Usage
+## Usage
 
 Build protoc-gen-fixture and put it in your path
 
